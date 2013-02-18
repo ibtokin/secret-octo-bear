@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <string name="User">User</string>
+    <string name="app_name">Employee Manager</string>
+    <string name="login_prompt">Select an Employee:</string>
+    <string name="Main_Menu">Main Menu</string>
+    <string name="PunchText">Punch In/Out</string>
+    <string name="menu_settings">Menu Settings</string>
+    <string name="title_activity_main">Title</string>
+    <string name="NotLoggedIn">Not Logged In Yet</string>
+    
+        
+</resources>
