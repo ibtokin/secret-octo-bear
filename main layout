@@ -1,0 +1,83 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_gravity="center|top"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context=".MainMenu" >
+    
+        <Spinner
+        android:id="@+id/Login_Spinner"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center|top"
+        android:prompt="@string/login_prompt" />
+    
+        <Button 
+        android:id="@+id/Button1"
+        android:layout_marginTop="35dip"
+        android:layout_marginLeft="50dip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/Login_Spinner"
+        android:text="Button1"
+        android:textSize="25sp" />
+        
+  
+        <Button 
+        android:id="@+id/Button2"
+        android:layout_marginTop="35dip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/Button1"
+        android:layout_below="@+id/Login_Spinner"
+        android:text="Button2"
+        android:textSize="25sp" />
+            
+        <Button 
+        android:id="@+id/Button3"
+        android:layout_marginLeft="50dip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/Button1"
+        android:text="Button3"
+        android:textSize="25sp" />
+        
+        <Button
+        android:id="@+id/Button4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/Button3"
+        android:layout_below="@+id/Button2"
+        android:text="Button4"
+        android:textSize="25sp" />
+        
+
+   
+      <TextView
+        android:id="@+id/toggleButtonLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="300dip"
+		android:layout_centerHorizontal="true"
+        android:text="@string/PunchText"
+        android:textSize="20sp" />
+
+   	 <ToggleButton
+        android:id="@+id/toggleButton1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toggleButtonLabel"
+		android:layout_centerHorizontal="true"/>
+
+     <TextView
+        android:id="@+id/timeOnClock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+		android:layout_centerHorizontal="true"
+		android:layout_alignParentBottom="true"
+        android:layout_below="@+id/toggleButton1"
+        android:textSize="20sp" 
+        android:text="@string/NotLoggedIn"/>
+        
+</RelativeLayout>
