@@ -1,0 +1,78 @@
+package com.example.trythisagain;
+
+import java.util.ArrayList;
+import java.util.Date;
+
+import android.os.Bundle;
+import android.app.Activity;
+import android.view.Menu;
+
+
+public class User {
+  //Class level variables:
+	public String Name;
+	private boolean ClockedIn, loggedIn;
+	private	ArrayList<Date> worklog= new ArrayList<Date>();
+	public long elapsed;
+	private int counter=0;
+	
+	
+	//Constructor:
+	public User(String name){
+		Name= name;
+		ClockedIn=false;
+		loggedIn= false;
+	}
+	
+	//"Get" methods:
+	
+	//to check if our user is clocked in:
+	public boolean isOnClock(){
+		return ClockedIn;
+	}
+	
+		public long getCurrentHours(){
+			if (isOnClock()){
+				Date newTime = new Date();//instantiates a new date equal to the current time 
+				elapsed= ((worklog.get(counter).getTime())-(newTime.getTime()));//compare the last punched time to current
+				return elapsed;
+			}
+			
+			if((!isOnClock())&&(counter>0)){ //if not punched in we have to make sure we can't try to get index of -1 from array
+				elapsed= ((worklog.get(counter).getTime())- (worklog.get(counter-1).getTime()));
+				return elapsed;
+			}else{ 
+				elapsed= 0;//^if not punched in and hours are updated, get the difference between the last two times this user punched
+			}
+			
+			return elapsed;
+		}
+	
+
+		
+	private Date getLastLoggedTime(){
+		return worklog.get(counter);
+	}
+
+	public String toString(){
+		return Name;
+	}
+	
+	//"Set" methods:
+	public void logInOrOut(){
+		loggedIn= !loggedIn;
+	}
+	
+	//this reacts to our onPunch event (whenever the user is selected and a toggle is turned on/off):
+	public void Punch(){
+	//Logs our time, changes the clockedIn boolean to its opposite:
+		ClockedIn= !ClockedIn;
+	//then instantiates a new date object called punchtime to add to our array
+		Date punchTime= new Date();
+		worklog.add(counter, punchTime);
+		getCurrentHours();
+		counter++;
+	}
+	
+
+}
