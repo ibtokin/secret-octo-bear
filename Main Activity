@@ -1,4 +1,4 @@
-package com.example.trythisagain;
+package com.example.smartmanager;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,107 +25,145 @@ public class MainActivity extends Activity {
 	User adan= new User("Adan");
 	User david= new User("David");
 	User mike= new User("Mike");
-	User dummy= new User("Please Select an Employe:");
+	User dummy= new User("Please Select an Employee:");
 	Date d, date;
-	Handler mHandler= new Handler();
+	boolean Running= false;
+	final Handler mHandler= new Handler();
+	    	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		boolean loggedIn=false;
 		ArrayList<User> list = new ArrayList<User>();
 		list.add(0, dummy);
 		list.add(1, marco);		
 		list.add(2, adan);		
 		list.add(3, david);
 		list.add(4, mike);
-				
+
 		Punch = (ToggleButton) findViewById(R.id.toggleButton1); //initializes our ToggleButton
 		timeOn = (TextView) findViewById(R.id.timeOnClock);//sets the textview for the time logged in
-	
+		
+		//contains a thread which calls our handler to post a callback to setTime every 100 millis
+		final Thread t = new Thread() {
+		        public void run() {
+		        	if(getUser().isOnClock()){
+		        		mHandler.postDelayed(setTimer, 100);
+		        		Running= true;
+		        	}
+		        }
+		    };
+		    t.start();
+		
+		    
+		    
+		/*LOGIN SPINNER */
+		
 		LoginSpinner = (Spinner)findViewById(R.id.Login_Spinner);//Declared Spinner, matched it to XML Resource ID
 		ArrayAdapter<User> adapter = new ArrayAdapter<User>(MainActivity.this, android.R.layout.simple_spinner_item, list);		
 		//set our adapter to our user list so that the spinner can use the list
-
-		LoginSpinner.setAdapter(adapter);
+		LoginSpinner.setAdapter(adapter); 
+		//set up a listener for the Spinner selection
 		LoginSpinner.setOnItemSelectedListener(new OnItemSelectedListener(){
-			//We need to override the onItemSelected method in this anonymous inner class within Spinner
 			@Override
-			public void onItemSelected(AdapterView<?> parent, View view, int pos,long id) {
-				//Sets an int called pos equal to the selected index
-				if(pos!=0){//as long as the index isn't Zero(Our empty User Object)
-			Toast.makeText(parent.getContext(), "Logged in as " + parent.getSelectedItem().toString(),
-					Toast.LENGTH_SHORT).show();//shows a toast with the above text for a short amount of time
-			((User)parent.getSelectedItem()).logInOrOut();//logs in the selected user
-			
-			/*now, if our user is logged in AND on the clock, we will set the toggle to on 
-			  and update the timer to their time on the clock*/
-			
-			if(((User)parent.getSelectedItem()).isOnClock()){
-				startUpdatingUI();
-				Punch.setChecked(true);
-			}else{
+			public void onItemSelected(AdapterView<?> parent, View view, int pos,long id) 
+			{
+				//*Sets an int called pos equal to the selected index*
+				if(pos!=0)//as long as the index isn't Zero(Our empty User Object)
+				{
+					Toast.makeText(parent.getContext(), "Logged in as " + parent.getSelectedItem().toString(),
+							Toast.LENGTH_SHORT).show();//shows a toast with the above text for a short amount of time
+					
+					Punch.setChecked(((User)parent.getSelectedItem()).isOnClock());//sets the toggle button to match Selected User's Clocked in Status
+					
+				}
+				else //if no selection is made or default spinner selection is chosen:
+			{
 				Punch.setChecked(false);
 				Toast.makeText(parent.getContext(), "Please Select a User",
 						Toast.LENGTH_SHORT).show();
-				startUpdatingUI();
-					}//ends else
-				}//ends the if statement for pos
-			}//ends onItemSelected
+					}
+			}
+			
 			
 				  @Override
-				  public void onNothingSelected(AdapterView<?> arg0) {
-					 }
-		}); //ends LoginSpinner listener
+				  public void onNothingSelected(AdapterView<?> arg0)
+{
+				  }
+		}); //ends LoginSpinner's OnItemSelectedListener
+
+		/*^^^^^^LOGIN SPINNER^^^^^^*/
+		
+		
 		
 		//set up our Toggle Button Listener:
+		
+		
 		Punch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 		    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 		    	/*checks to see if an employee is logged in via our User instance boolean
 		    	 * which is true only when a selection other than default has been selected*/
 		    	if(LoginSpinner.getSelectedItemPosition()==0){	//if the spinner selection is still at 0 and someone tries to log in:
 					Toast.makeText(LoginSpinner.getContext(), "You Must Select Valid User First",//notifies the user that someone needs to be logged in
-							Toast.LENGTH_SHORT).show();//shows a toast with the above text for a short amount of time
-		        	Punch.setChecked(false);//sets our toggle button back to an "off" state because default selection can't be clocked in
+							Toast.LENGTH_SHORT).show();
+		        	Punch.setChecked(false);//sets our toggle button back to an "off" state because default spinner selection can't be clocked in
 		        	}
 		    		//if a valid User is logged in, go ahead:
-		    	if(LoginSpinner.getSelectedItemPosition()!=0){ //checks if the Spinner selection is valid
-		        	((User) LoginSpinner.getSelectedItem()).Punch(); //clocks selected User in/out
-		        	startUpdatingUI();//sets the TextView to our current User's time
+		    	else
+		    	{ //checks if the Spinner selection is valid
+		        	toggleClickEvent();
+		        	
 		    	}
-		    }//end while loop
-		});//end onCheckedChanged method
-		    //end our Punch Listener
+		    }
+		});//end onCheckedChangedListener
+		
 	}//ends onCreate
-	
+
 	//this Runnable sets our textview to the current User's time on the clock:
-	final Runnable setTime = new Runnable() {
-	    public void run() {
-			timeOn.setText(updateTimer(((User) LoginSpinner.getSelectedItem()).getCurrentHours()));
-	    }//called by our mHandler in Thread t of updateUI method
-	};
-	
-	//let's set up a method to update our UI
-	protected void startUpdatingUI() {
-//contains a thread which calls our handler to post a callback to setTime every 100 millis
-	    Thread t = new Thread() {
-	        public void run() {
-	             while(LoginSpinner.getSelectedItemPosition()!=0){//while punched in, update every 100 ms
-	             mHandler.postDelayed(setTime, 100);}
-	             mHandler.post(setTime);//posts setTime with no callback if we're not clocked in. preventing it from running every 100 ms
-	             }
-	    };
-	    t.start();//starts Thread t when method is called
-	}
-	
+		public Runnable setTimer = new Runnable() 
+		{
+			public void run(){
+				((TextView)findViewById(R.id.timeOnClock)).setText(updateTimer(getUser().getTheTime()));
+			}
+		};
+		
+	    public User getUser()
+	    {
+			return (User) LoginSpinner.getSelectedItem();
+	    }
+		
+		public void toggleClickEvent()
+		{	
+ //clocks selected User in/out, updates their time
+			if(getUser()!=dummy){
+				getUser().Punch();
+			}
+			else
+			{
+				Toast.makeText(LoginSpinner.getContext(), "You Must Select Valid User First",//notifies the user that someone needs to be logged in
+						Toast.LENGTH_SHORT).show();
+			}
+		}
+		
+		
+	    public void stopTimer()
+        {
+        	mHandler.removeCallbacks(setTimer);
+        }
+	    
+	    
+	    
+
+
 	//now for the timer updater method:
 	//it returns a String so we can use it on our timeOn TextView:
-	
-	private String updateTimer(long time){ //method that takes a float and treats it as time
+
+	public String updateTimer(long time) //method that takes a long and formats it to a "hh:mm" String
+	{ 
 		String hours,minutes,seconds;
 		long secs, mins, hrs;
-		
+
 		secs = (long)(time/1000);
 		mins = (long)((time/1000)/60);
 		hrs = (long)(((time/1000)/60)/60);
@@ -167,14 +205,11 @@ public class MainActivity extends Activity {
     	/* Setting the timer text to the elapsed time */
 		return (hours + ":" + minutes + ":" + seconds);
 	}
-	
-
 
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.activity_main, menu);
-		return true;
+		return false;
 	}
 }
