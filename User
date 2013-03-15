@@ -31,24 +31,9 @@ public class User
 	
 	public long getTheTime()
 	{
-		long mTime= (getCurrentTimeOn());
+		long mTime= (worklog.get(counter).getTime());
 		return mTime;
 	}
-
-		private long getCurrentTimeOn()
-		{
-			if(counter==0)
-			{
-			elapsed=0;
-			}
-			if(counter>=1)
-			{
-				Date mDate= new Date();
-				long punchtime= (worklog.get(counter)).getTime();
-				elapsed = (punchtime-mDate.getTime());
-			}
-			return elapsed;
-		}
 
 	public String toString()
 	{
