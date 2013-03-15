@@ -8,7 +8,6 @@
     <string name="PunchText">Punch In/Out</string>
     <string name="menu_settings">Menu Settings</string>
     <string name="title_activity_main">Title</string>
-    <string name="NotLoggedIn">Not Logged In Yet</string>
     
         
 </resources>
