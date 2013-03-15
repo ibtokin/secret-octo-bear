@@ -27,6 +27,7 @@ public class MainActivity extends Activity {
 	User mike= new User("Mike");
 	User dummy= new User("Please Select an Employee:");
 	Date d, date;
+	long elapsedTime;
 	boolean Running= false;
 	final Handler mHandler= new Handler();
 	    	
@@ -111,9 +112,15 @@ public class MainActivity extends Activity {
 		        	}
 		    		//if a valid User is logged in, go ahead:
 		    	else
-		    	{ //checks if the Spinner selection is valid
-		        	toggleClickEvent();
-		        	
+		    	{ 
+		    		if(getUser().isOnClock())//checks if the Spinner selection is valid
+		    		{
+		    			mHandler.postDelayed(setTimer, 100);
+		    		}
+		    		if(getUser().isOnClock())
+		    		{
+		    			stopTimer();
+		    		}
 		    	}
 		    }
 		});//end onCheckedChangedListener
@@ -124,7 +131,9 @@ public class MainActivity extends Activity {
 		public Runnable setTimer = new Runnable() 
 		{
 			public void run(){
-				((TextView)findViewById(R.id.timeOnClock)).setText(updateTimer(getUser().getTheTime()));
+				elapsedTime = (System.currentTimeMillis() - getUser().getTheTime());
+				updateTimer(elapsedTime);
+				mHandler.postDelayed(this, 100);
 			}
 		};
 		
@@ -138,18 +147,20 @@ public class MainActivity extends Activity {
  //clocks selected User in/out, updates their time
 			if(getUser()!=dummy){
 				getUser().Punch();
-			}
+					}
 			else
 			{
 				Toast.makeText(LoginSpinner.getContext(), "You Must Select Valid User First",//notifies the user that someone needs to be logged in
 						Toast.LENGTH_SHORT).show();
+		
 			}
+			
 		}
 		
 		
 	    public void stopTimer()
         {
-        	mHandler.removeCallbacks(setTimer);
+	    	mHandler.removeCallbacks(setTimer);
         }
 	    
 	    
