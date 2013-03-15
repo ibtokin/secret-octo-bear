@@ -77,7 +77,6 @@
 		android:layout_centerHorizontal="true"
 		android:layout_alignParentBottom="true"
         android:layout_below="@+id/toggleButton1"
-        android:textSize="20sp" 
-        android:text="@string/NotLoggedIn"/>
+        android:textSize="20sp"/>
         
 </RelativeLayout>
